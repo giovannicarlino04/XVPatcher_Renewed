@@ -2,7 +2,7 @@ CC := i686-w64-mingw32-gcc
 CXX := i686-w64-mingw32-g++
 
 OUTPUT := xinput1_3.dll
-OUTPUT_COPY := C:/GAMES/DB\ Xenoverse/
+OUTPUT_COPY := D:/Games/DB\ Xenoverse/
 
 OBJS := main.o common.o patches.o
 CFLAGS := -Wall -I. -I./ -std=gnu99 -mms-bitfields -s -O2 -masm=intel -shared -Wl,--subsystem,windows,--kill-at,--enable-stdcall-fixup -DNO_ZLIB -fpermissive

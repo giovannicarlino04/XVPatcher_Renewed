@@ -1,8 +1,14 @@
 #include "patches.h"
 
-
+//WITH THE OLD APPROACH WE ONLY HAD ONE DATA FOLDER, THIS CAUSED A WEIRD BUG
+//THAT DID NOT ACTIVATE THE DLC3, LET'S SEE IF MAKING SEPARATE FOLDERS FIXES IT
 bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
-   	const char* newBytes = "\x2F\x64\x61\x74\x61\x2F\x00\x00\x00\x00";
+   	const char* newBytes1 = "\x2F\x64\x61\x74\x61\x2F\x00\x00\x00\x00";
+   	const char* newBytes2 = "\x2F\x64\x61\x74\x61\x02\x2F\x00\x00\x00";
+   	const char* newBytes3 = "\x2F\x64\x61\x74\x61\x70\x01\x2F\x00\x00";
+   	const char* newBytes4 = "\x2F\x64\x61\x74\x61\x70\x02\x2F\x00\x00";
+   	const char* newBytes5 = "\x2F\x64\x61\x74\x61\x70\x03\x2F\x00\x00";
+
 	const BYTE patchsize = wcslen(L"\x2F\x64\x61\x74\x61\x2F\x00\x00\x00\x00") * sizeof(wchar_t);
 
 	LPVOID address1 = nullptr;
@@ -28,7 +34,7 @@ bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
     if (!VirtualProtect(address1, patchsize, newProtect, &oldProtect)) {
         return false;
     }
-    if (WriteProcessMemory(hProcess, address1, newBytes, strlen(newBytes), &numberOfBytesWritten)) {
+    if (WriteProcessMemory(hProcess, address1, newBytes1, strlen(newBytes1), &numberOfBytesWritten)) {
     }
     if (!VirtualProtect(address1, patchsize, oldProtect, &oldProtect)) {
         return false;
@@ -37,7 +43,7 @@ bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
     if (!VirtualProtect(address2, patchsize, newProtect, &oldProtect)) {
         return false;
     }
-    if (WriteProcessMemory(hProcess, address2, newBytes, strlen(newBytes), &numberOfBytesWritten)) {
+    if (WriteProcessMemory(hProcess, address2, newBytes2, strlen(newBytes2), &numberOfBytesWritten)) {
     }
 
     if (!VirtualProtect(address2, patchsize, oldProtect, &oldProtect)) {
@@ -46,7 +52,7 @@ bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
         if (!VirtualProtect(address3, patchsize, newProtect, &oldProtect)) {
         return false;
     }
-    if (WriteProcessMemory(hProcess, address3, newBytes, strlen(newBytes), &numberOfBytesWritten)) {
+    if (WriteProcessMemory(hProcess, address3, newBytes3, strlen(newBytes3), &numberOfBytesWritten)) {
     }
     if (!VirtualProtect(address3, patchsize, oldProtect, &oldProtect)) {
         return false;
@@ -55,7 +61,7 @@ bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
     if (!VirtualProtect(address4, patchsize, newProtect, &oldProtect)) {
         return false;
     }
-    if (WriteProcessMemory(hProcess, address4, newBytes, strlen(newBytes), &numberOfBytesWritten)) {
+    if (WriteProcessMemory(hProcess, address4, newBytes4, strlen(newBytes4), &numberOfBytesWritten)) {
     }
     if (!VirtualProtect(address4, patchsize, oldProtect, &oldProtect)) {
         return false;
@@ -64,7 +70,7 @@ bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
     if (!VirtualProtect(address5, patchsize, newProtect, &oldProtect)) {
         return false;
     }
-    if (WriteProcessMemory(hProcess, address5, newBytes, strlen(newBytes), &numberOfBytesWritten)) {
+    if (WriteProcessMemory(hProcess, address5, newBytes5, strlen(newBytes5), &numberOfBytesWritten)) {
     }
     if (!VirtualProtect(address5, patchsize, oldProtect, &oldProtect)) {
         return false;
