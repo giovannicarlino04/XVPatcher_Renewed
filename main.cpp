@@ -193,8 +193,9 @@ extern "C" BOOL EXPORT DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvRe
 			
 		CPKPatches(hProcess, moduleBaseAddress);
 		CMSPatches(hProcess, moduleBaseAddress);
-		ConfigDatPatch(hProcess, moduleBaseAddress);
 		VersionStringPatch(hProcess, moduleBaseAddress);
+		BacBcmPatch(hProcess, moduleBaseAddress);
+		InfiniteTimerPatch(hProcess, moduleBaseAddress);
 		
 		if (!HookImport("KERNEL32.dll", "GetStartupInfoW", (void *)GetStartupInfoW_Patched))
 		{
