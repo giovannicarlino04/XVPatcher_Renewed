@@ -7,6 +7,7 @@
 #define PATCHES_H
 
 bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress);
+bool ConfigDatPatch(HANDLE hProcess, uintptr_t moduleBaseAddress);
 bool CMSPatches(HANDLE hProcess, uintptr_t moduleBaseAddress);
 bool VersionStringPatch(HANDLE hProcess, uintptr_t moduleBaseAddress);
 bool BacBcmPatch(HANDLE hProcess, uintptr_t moduleBaseAddress);

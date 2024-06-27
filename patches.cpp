@@ -1,19 +1,13 @@
 #include "patches.h"
 
-//WITH THE OLD APPROACH WE ONLY HAD ONE DATA FOLDER, THIS CAUSED A WEIRD BUG
-//THAT DID NOT ACTIVATE THE DLC3, LET'S SEE IF MAKING SEPARATE FOLDERS FIXES IT
 bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
-   	const BYTE newBytes1[] = { 0x2F, 0x64, 0x61, 0x74, 0x61, 0x2F, 0x00, 0x00, 0x00, 0x00 };
-   	const BYTE newBytes2[] = { 0x2F, 0x64, 0x61, 0x74, 0x61, 0x02, 0x2F, 0x00, 0x00, 0x00 };
-   	const BYTE newBytes3[] = { 0x2F, 0x64, 0x61, 0x74, 0x61, 0x70, 0x01, 0x2F, 0x00, 0x00 };
-   	const BYTE newBytes4[] = { 0x2F, 0x64, 0x61, 0x74, 0x61, 0x70, 0x02, 0x2F, 0x00, 0x00 };
-   	const BYTE newBytes5[] = { 0x2F, 0x64, 0x61, 0x74, 0x61, 0x70, 0x03, 0x2F, 0x00, 0x00 };
+   	const BYTE newBytes[] = { 0x2F, 0x64, 0x61, 0x74, 0x61, 0x2F, 0x00, 0x00, 0x00, 0x00 };
 
-	const SIZE_T patchsize1 = sizeof(newBytes1);
-	const SIZE_T patchsize2 = sizeof(newBytes2);
-	const SIZE_T patchsize3 = sizeof(newBytes3);
-	const SIZE_T patchsize4 = sizeof(newBytes4);
-	const SIZE_T patchsize5 = sizeof(newBytes5);
+	const SIZE_T patchsize1 = sizeof(newBytes);
+	const SIZE_T patchsize2 = sizeof(newBytes);
+	const SIZE_T patchsize3 = sizeof(newBytes);
+	const SIZE_T patchsize4 = sizeof(newBytes);
+	const SIZE_T patchsize5 = sizeof(newBytes);
 
 	LPVOID address1 = nullptr;
     LPVOID address2 = nullptr;	
@@ -36,7 +30,7 @@ bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
     if (!VirtualProtect(address1, patchsize1, newProtect, &oldProtect)) {
         return false;
     }
-    if (WriteProcessMemory(hProcess, address1, newBytes1, patchsize1, &numberOfBytesWritten)) {
+    if (WriteProcessMemory(hProcess, address1, newBytes, patchsize1, &numberOfBytesWritten)) {
     }
     if (!VirtualProtect(address1, patchsize1, oldProtect, &oldProtect)) {
         return false;
@@ -46,7 +40,7 @@ bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
     if (!VirtualProtect(address2, patchsize2, newProtect, &oldProtect)) {
         return false;
     }
-    if (WriteProcessMemory(hProcess, address2, newBytes2, patchsize2, &numberOfBytesWritten)) {
+    if (WriteProcessMemory(hProcess, address2, newBytes, patchsize2, &numberOfBytesWritten)) {
     }
     if (!VirtualProtect(address2, patchsize2, oldProtect, &oldProtect)) {
         return false;
@@ -56,7 +50,7 @@ bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
     if (!VirtualProtect(address3, patchsize3, newProtect, &oldProtect)) {
         return false;
     }
-    if (WriteProcessMemory(hProcess, address3, newBytes3, patchsize3, &numberOfBytesWritten)) {
+    if (WriteProcessMemory(hProcess, address3, newBytes, patchsize3, &numberOfBytesWritten)) {
     }
     if (!VirtualProtect(address3, patchsize3, oldProtect, &oldProtect)) {
         return false;
@@ -66,7 +60,7 @@ bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
     if (!VirtualProtect(address4, patchsize4, newProtect, &oldProtect)) {
         return false;
     }
-    if (WriteProcessMemory(hProcess, address4, newBytes4, patchsize4, &numberOfBytesWritten)) {
+    if (WriteProcessMemory(hProcess, address4, newBytes, patchsize4, &numberOfBytesWritten)) {
     }
     if (!VirtualProtect(address4, patchsize4, oldProtect, &oldProtect)) {
         return false;
@@ -76,13 +70,48 @@ bool CPKPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
     if (!VirtualProtect(address5, patchsize5, newProtect, &oldProtect)) {
         return false;
     }
-    if (WriteProcessMemory(hProcess, address5, newBytes5, patchsize5, &numberOfBytesWritten)) {
+    if (WriteProcessMemory(hProcess, address5, newBytes, patchsize5, &numberOfBytesWritten)) {
     }
     if (!VirtualProtect(address5, patchsize5, oldProtect, &oldProtect)) {
         return false;
     }
 
 	return true;
+}
+
+bool ConfigDatPatch(HANDLE hProcess, uintptr_t moduleBaseAddress) {
+	const char* newBytes1 =  "\x64\x61\x74\x61\x2F\x63\x6F\x6E\x66\x69\x67\x2E\x64\x61\x74";
+	const BYTE patchsize = wcslen(L"64\x61\x74\x61\x32\x2F\x63\x6F\x6E\x66\x69\x67\x2E\x64\x61\x74") * sizeof(wchar_t);
+
+    LPVOID address1 = nullptr;
+    SIZE_T numberOfBytesWritten;
+    DWORD oldProtect;
+    DWORD newProtect = PAGE_EXECUTE_READWRITE;
+
+    if (moduleBaseAddress != 0) {
+        address1 = (LPVOID)(moduleBaseAddress + 0x1190490);
+    }
+
+    ////////////////// PATCHES GO HERE ///////////////
+
+    // Config.dat Patch 1
+    if (address1 == nullptr) {
+        return false;
+    }
+
+    if (!VirtualProtect(address1, patchsize, newProtect, &oldProtect)) {
+        return false;
+    }
+
+    if (!WriteProcessMemory(hProcess, address1, newBytes1, patchsize, &numberOfBytesWritten)) {
+        return false;
+    }
+
+    if (!VirtualProtect(address1, patchsize, oldProtect, &newProtect)) {
+        return false;
+    }
+
+    return true;
 }
 
 bool CMSPatches(HANDLE hProcess, uintptr_t moduleBaseAddress) {
